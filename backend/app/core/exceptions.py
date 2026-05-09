@@ -1,21 +1,25 @@
 from fastapi import HTTPException, status
 
-class AuthException(HTTPException):
-    pass 
 
-class InvalidCredentialsException(AuthException):
+class AuthException(HTTPException):
+    pass
+
+
+class InvalidCredentialsError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
+            detail="Invalid credentials",
         )
 
-class EmailAlreadyExistsException(AuthException):
+
+class EmailAlreadyExistsError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Email already exists",
+            detail="Email already registered",
         )
+
 
 class GamertagAlreadyTakenError(AuthException):
     def __init__(self):
@@ -24,19 +28,22 @@ class GamertagAlreadyTakenError(AuthException):
             detail="Gamertag already taken",
         )
 
+
 class AccountBannedError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Account is banned",
+            detail="Account banned",
         )
+
 
 class AccountSuspendedError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Account is suspended",
+            detail="Account suspended",
         )
+
 
 class InvalidOTPError(AuthException):
     def __init__(self):
@@ -45,24 +52,26 @@ class InvalidOTPError(AuthException):
             detail="Invalid OTP code",
         )
 
-class OTPConfiguredError(AuthException):
+
+class OTPNotConfiguredError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="OTP is already configured for this account",
+            detail="2FA not configured",
         )
+
 
 class InvalidTokenError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token",
+            detail="Invalid or expired token",
         )
+
 
 class SessionExpiredError(AuthException):
     def __init__(self):
         super().__init__(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Session has expired",
+            detail="Session expired, please login again",
         )
-
