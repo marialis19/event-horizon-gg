@@ -5,6 +5,7 @@ from app.schemas.auth import (
     RegisterRequest,
     LoginRequest,
     OTPVerifyRequest,
+    Enable2FAConfirmRequest,
     TokenResponse,
     UserResponse,
 )
@@ -119,7 +120,7 @@ async def enable_2fa(
 
 @router.post("/2fa/confirm", status_code=status.HTTP_200_OK)
 async def confirm_2fa(
-    data: OTPVerifyRequest,
+    data: Enable2FAConfirmRequest,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> dict:

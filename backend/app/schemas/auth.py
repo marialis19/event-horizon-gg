@@ -53,6 +53,8 @@ class OTPVerifyRequest(BaseModel):
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
+class Enable2FAConfirmRequest(BaseModel):
+    otp_code: str
 
 class TokenResponse(BaseModel):
     access_token: str
