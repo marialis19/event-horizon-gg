@@ -14,28 +14,21 @@ export default function Login() {
     email, setEmail,
     password, setPassword,
     gamertag, setGamertag,
-    loading, setLoading,
-    error, setError,
+    loading,
+    error,
     showPassword, setShowPassword,
     fieldErrors,
     touched,
+    success,
     handleBlur,
     handleChange,
-    validateAll,
+    handleSubmit,
     reset,
-  } = useAuthForm(mode);
+  } = useAuthForm(mode, () => handleModeChange("login"));
 
   const handleModeChange = (m: Mode) => {
     setMode(m);
     reset();
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateAll()) return;
-    setLoading(true);
-    setError("");
-    setTimeout(() => setLoading(false), 1500);
   };
 
   return (
@@ -56,14 +49,12 @@ export default function Login() {
       {/* Top bar */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-3">
         <div className="w-1.5 h-1.5 rounded-full bg-[#3dd6f5] animate-pulse" />
-        <span className="font-mono text-[10px] tracking-[4px] text-[#3dd6f5]/50 uppercase">
-          Gaming Platform
-        </span>
+        <span className="font-mono text-[10px] tracking-[4px] text-[#3dd6f5]/50 uppercase"> Gaming Platform </span>
         <div className="w-1.5 h-1.5 rounded-full bg-[#3dd6f5] animate-pulse" />
       </div>
 
       {/* Card wrapper */}
-      <div className="relative w-full max-w-md mx-4 mt-10">
+      <div className="relative w-full max-w-md mx-4 mt-12">
 
         {/* Logo flotante */}
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 z-10">
@@ -72,6 +63,8 @@ export default function Login() {
             alt="Event Horizon GG"
             width={180}
             height={180}
+            loading="eager"
+            priority
           />
         </div>
 
@@ -146,11 +139,20 @@ export default function Login() {
               }
             />
 
+        <div className="min-h-32px">
             {error && (
               <div className="bg-[#3dd6f5]/5 border border-[#3dd6f5]/20 rounded px-4 py-2.5">
                 <p className="text-[#3dd6f5] text-xs font-mono">{error}</p>
               </div>
             )}
+            {success && (
+              <div className="bg-[#3dd6f5]/5 border border-[#3dd6f5]/20 rounded px-4 py-2.5">
+                <p className="text-[#3dd6f5] text-xs font-mono">
+                   Account created - You can now sign in 
+                </p>
+              </div>
+            )}
+        </div>
 
             <Button type="submit" disabled={loading}>
               {loading ? (
@@ -176,7 +178,7 @@ export default function Login() {
       {/* Bottom bar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
         <p className="font-mono text-[9px] tracking-[3px] text-[#1e3a4a] uppercase">
-          Event Horizon GG © 2026 — All rights reserved
+          Event Horizon © 2026 — All rights reserved
         </p>
       </div>
     </main>

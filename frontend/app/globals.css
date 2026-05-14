@@ -1,16 +1,29 @@
 @import "tailwindcss";
 
 :root {
+
+  /* Fondos */
   --color-bg: #05080f;
   --color-surface: #080b10;
   --color-surface-2: #0d1117;
-  --color-border: rgba(61, 214, 245, 0.1);
-  --color-border-focus: rgba(61, 214, 245, 0.4);
+
+  /* Colores principales */
   --color-cyan: #3dd6f5;
-  --color-cyan-dim: rgba(61, 214, 245, 0.5);
   --color-purple: #a855f7;
-  --color-muted: #64748b;
-  --color-muted-dark: #334155;
+
+  /* Variantes */
+  --color-cyan-dim: rgba(61, 214, 245, 0.5);
+  --color-cyan-soft: rgba(61, 214, 245, 0.1);
+  --color-cyan-focus: rgba(61, 214, 245, 0.4);
+
+  /* Bordes */
+  --color-border: rgba(61, 214, 245, 0.1);
+  --color-border-strong: rgba(61, 214, 245, 0.3);
+
+  /* Textos */
+  --color-text-muted: #64748b;
+  --color-text-dark: #334155;
+  --color-text-light: #ffffff;
 }
 
 @layer utilities {
@@ -26,7 +39,7 @@
   }
 
   .error-text {
-    @apply mt-1 text-[10px] font-mono text-[#3dd6f5] h-4;
+    @apply mt-1 text-[10px] font-mono text-[#3dd6f5] h-0;
   }
 }
 

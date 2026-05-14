@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { registerUser, loginUser } from "../services/authService";
 
 interface FormErrors {
   gamertag?: string;
@@ -6,7 +7,9 @@ interface FormErrors {
   password?: string;
 }
 
-export function useAuthForm(mode: "login" | "register") {
+type FieldName = "email" | "password" | "gamertag";
+
+export function useAuthForm(mode: "login" | "register", onRegisterSuccess?: () => void) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [gamertag, setGamertag] = useState("");
@@ -14,9 +17,10 @@ export function useAuthForm(mode: "login" | "register") {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<FormErrors>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [touched, setTouched] = useState<Record<FieldName, boolean>>({} as Record<FieldName, boolean>);
+  const [success, setSuccess] = useState(false);
 
-  const validateField = (name: string, value: string): string => {
+  const validateField = (name: FieldName, value: string): string => {
     switch (name) {
       case "gamertag":
         if (!value) return "Gamertag is required";
@@ -30,22 +34,22 @@ export function useAuthForm(mode: "login" | "register") {
         return "";
       case "password":
         if (!value) return "Password is required";
-        if (value.length < 8) return "Minimum 8 characters";
-        if (!/[A-Z]/.test(value)) return "Must contain an uppercase letter";
-        if (!/[0-9]/.test(value)) return "Must contain a number";
-        return "";
-      default:
+        if (mode === "register") {
+          if (value.length < 8) return "Minimum 8 characters";
+          if (!/[A-Z]/.test(value)) return "Must contain an uppercase letter";
+          if (!/[0-9]/.test(value)) return "Must contain a number";
+        }
         return "";
     }
   };
 
-  const handleBlur = (name: string, value: string) => {
+  const handleBlur = (name: FieldName, value: string) => {
     setTouched((prev) => ({ ...prev, [name]: true }));
     const err = validateField(name, value);
     setFieldErrors((prev) => ({ ...prev, [name]: err }));
   };
 
-  const handleChange = (name: string, value: string) => {
+  const handleChange = (name: FieldName, value: string) => {
     if (touched[name]) {
       const err = validateField(name, value);
       setFieldErrors((prev) => ({ ...prev, [name]: err }));
@@ -53,17 +57,17 @@ export function useAuthForm(mode: "login" | "register") {
   };
 
   const validateAll = (): boolean => {
-    const fields = mode === "register"
+    const fields: FieldName[] = mode === "register"
       ? ["gamertag", "email", "password"]
       : ["email", "password"];
 
-    const values: Record<string, string> = { gamertag, email, password };
+    const values: Record<FieldName, string> = { gamertag, email, password };
     const errors: FormErrors = {};
     let valid = true;
 
     fields.forEach((field) => {
       const err = validateField(field, values[field]);
-      if (err) { errors[field as keyof FormErrors] = err; valid = false; }
+      if (err) { errors[field] = err; valid = false; }
     });
 
     setFieldErrors(errors);
@@ -71,9 +75,49 @@ export function useAuthForm(mode: "login" | "register") {
     return valid;
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateAll()) return;
+
+    setLoading(true);
+    setError("");
+    setSuccess(false);
+
+    try {
+      if (mode === "register") {
+        await registerUser({ email, gamertag, password });
+        setSuccess(true);
+        setTimeout(() => {
+          setSuccess(false);
+          onRegisterSuccess?.();
+        }, 2000);
+      } else {
+        const data = await loginUser({ email, password });
+        if (data.requires_otp) {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("temp_token", data.access_token);
+          }
+        } else {
+          if (typeof window !== "undefined") {
+            localStorage.setItem("access_token", data.access_token);
+          }
+          window.location.href = "/dashboard";
+        }
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const reset = () => {
     setFieldErrors({});
-    setTouched({});
+    setTouched({} as Record<FieldName, boolean>);
     setError("");
     setEmail("");
     setPassword("");
@@ -84,14 +128,16 @@ export function useAuthForm(mode: "login" | "register") {
     email, setEmail,
     password, setPassword,
     gamertag, setGamertag,
-    loading, setLoading,
-    error, setError,
+    loading,
+    error,
     showPassword, setShowPassword,
     fieldErrors,
     touched,
+    success,
     handleBlur,
     handleChange,
     validateAll,
+    handleSubmit,
     reset,
   };
 }
