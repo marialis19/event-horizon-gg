@@ -41,7 +41,7 @@ export default function Input({
           className={`input-gaming ${
             hasError
               ? "border-[#3dd6f5]/40"
-              : "border-[#3dd6f5]/10 focus:border-[#3dd6f5]/40"
+              : "border-(--color-border) focus:border-[#3dd6f5]/40"
           } ${suffix ? "pr-16" : ""}`}
         />
         {suffix && (
