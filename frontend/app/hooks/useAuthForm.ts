@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { registerUser, loginUser } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 interface FormErrors {
   gamertag?: string;
@@ -10,6 +11,8 @@ interface FormErrors {
 type FieldName = "email" | "password" | "gamertag";
 
 export function useAuthForm(mode: "login" | "register", onRegisterSuccess?: () => void) {
+  const { setTokenAndUser } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [gamertag, setGamertag] = useState("");
@@ -93,14 +96,13 @@ export function useAuthForm(mode: "login" | "register", onRegisterSuccess?: () =
         }, 2000);
       } else {
         const data = await loginUser({ email, password });
+
         if (data.requires_otp) {
-          if (typeof window !== "undefined") {
-            localStorage.setItem("temp_token", data.access_token);
-          }
+          // TODO: pantalla OTP — guardamos temp token en memoria por ahora
+          sessionStorage.setItem("temp_token", data.access_token);
+          window.location.href = "/otp";
         } else {
-          if (typeof window !== "undefined") {
-            localStorage.setItem("access_token", data.access_token);
-          }
+          await setTokenAndUser(data.access_token);
           window.location.href = "/dashboard";
         }
       }

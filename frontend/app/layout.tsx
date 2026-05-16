@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Rajdhani, Barlow_Condensed } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "./context/AuthContext";
 
 const rajdhani = Rajdhani({
   weight: ["500", "700"],
@@ -27,7 +28,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${rajdhani.variable} ${barlowCondensed.variable} antialiased`}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

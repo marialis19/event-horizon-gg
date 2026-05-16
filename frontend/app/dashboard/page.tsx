@@ -1,50 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getMe, logoutUser } from "../services/authService";
-import type { UserResponse } from "../services/authService";
+import { useAuth } from "../context/AuthContext";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [user, setUser] = useState<UserResponse | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, isLoading, logout } = useAuth();
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      router.push("/");
-      return;
-    }
-
-    getMe(token)
-      .then(setUser)
-      .catch(() => {
-        localStorage.removeItem("access_token");
-        router.push("/");
-      })
-      .finally(() => setLoading(false));
-  }, [router]);
-
-  const handleLogout = async () => {
-    const token = localStorage.getItem("access_token");
-    try {
-      if (token) await logoutUser(token);
-    } catch (err) {
-      console.error("Logout failed silently:", err);
-    } finally {
-      localStorage.removeItem("access_token");
+    if (!isLoading && !user) {
       router.push("/");
     }
-  };
+  }, [user, isLoading, router]);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <main className="min-h-screen bg-[#05080f] flex items-center justify-center">
         <div className="w-6 h-6 border border-[#3dd6f5]/50 border-t-[#3dd6f5] rounded-full animate-spin" />
       </main>
     );
   }
+
+  if (!user) return null;
 
   return (
     <main className="min-h-screen bg-[#05080f] flex items-center justify-center relative overflow-hidden">
@@ -72,17 +50,17 @@ export default function Dashboard() {
               Access Granted
             </h1>
             <p className="text-2xl font-black tracking-[4px] uppercase text-white">
-              {user?.gamertag}
+              {user.gamertag}
             </p>
           </div>
 
           {/* User info */}
           <div className="space-y-3 mb-8">
             {[
-              { label: "Email", value: user?.email },
-              { label: "Role", value: user?.role },
-              { label: "Status", value: user?.status },
-              { label: "2FA", value: user?.is_2fa_enabled ? "Enabled" : "Disabled" },
+              { label: "Email", value: user.email },
+              { label: "Role", value: user.role },
+              { label: "Status", value: user.status },
+              { label: "2FA", value: user.is_2fa_enabled ? "Enabled" : "Disabled" },
             ].map(({ label, value }) => (
               <div key={label} className="flex justify-between items-center py-2 border-b border-[#3dd6f5]/5">
                 <span className="font-mono text-[10px] tracking-[2px] text-[#64748b] uppercase">
@@ -97,7 +75,7 @@ export default function Dashboard() {
 
           {/* Logout */}
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="w-full py-3 bg-transparent hover:bg-[#3dd6f5]/5 border border-[#3dd6f5]/20 hover:border-[#3dd6f5]/40 rounded text-[#64748b] hover:text-[#3dd6f5] text-xs tracking-[3px] uppercase font-mono transition-all duration-200"
           >
             Disconnect
@@ -108,7 +86,7 @@ export default function Dashboard() {
       {/* Bottom bar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
         <p className="font-mono text-[9px] tracking-[3px] text-[#1e3a4a] uppercase">
-          Event Horizon © 2026 — All rights reserved
+          Event Horizon GG © 2026 — All rights reserved
         </p>
       </div>
     </main>
