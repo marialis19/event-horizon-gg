@@ -17,7 +17,7 @@ interface TokenResponse {
   requires_otp: boolean;
 }
 
-interface UserResponse {
+export interface UserResponse {
   id: string;
   email: string;
   gamertag: string;
@@ -49,7 +49,7 @@ export async function loginUser(data: LoginData): Promise<TokenResponse> {
   const res = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    credentials: "include", // necesario para recibir la cookie del refresh token
+    credentials: "include",
     body: JSON.stringify(data),
   });
 
@@ -61,9 +61,10 @@ export async function loginUser(data: LoginData): Promise<TokenResponse> {
   return res.json();
 }
 
-export async function logoutUser(): Promise<void> {
+export async function logoutUser(token: string): Promise<void> {
   await fetch(`${API_URL}/auth/logout`, {
     method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
     credentials: "include",
   });
 }
