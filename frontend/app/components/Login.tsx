@@ -32,7 +32,7 @@ export default function Login() {
   };
 
   return (
-    <main className="min-h-screen bg-[var(--color-bg)] flex items-center justify-center relative overflow-hidden">
+    <main className="min-h-screen bg-(--color-bg) flex items-center justify-center relative overflow-hidden">
 
       {/* Background grid */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(61,214,245,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(61,214,245,0.03)_1px,transparent_1px)] bg-size-[60px_60px]" />
@@ -41,16 +41,16 @@ export default function Login() {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-[radial-gradient(circle,rgba(61,214,245,0.06)_0%,transparent_70%)] pointer-events-none" />
 
       {/* Esquinas decorativas */}
-      <div className="absolute top-6 left-6 w-12 h-12 border-l-2 border-t-2 border-[var(--color-border-strong)]" />
-      <div className="absolute top-6 right-6 w-12 h-12 border-r-2 border-t-2 border-[var(--color-border-strong)]" />
-      <div className="absolute bottom-6 left-6 w-12 h-12 border-l-2 border-b-2 border-[var(--color-border-strong)]" />
-      <div className="absolute bottom-6 right-6 w-12 h-12 border-r-2 border-b-2 border-[var(--color-border-strong)]" />
+      <div className="absolute top-6 left-6 w-12 h-12 border-l-2 border-t-2 border-(--color-border-strong)" />
+      <div className="absolute top-6 right-6 w-12 h-12 border-r-2 border-t-2 border-(--color-border-strong)" />
+      <div className="absolute bottom-6 left-6 w-12 h-12 border-l-2 border-b-2 border-(--color-border-strong)" />
+      <div className="absolute bottom-6 right-6 w-12 h-12 border-r-2 border-b-2 border-(--color-border-strong)" />
 
       {/* Top bar */}
       <div className="absolute top-6 left-1/2 -translate-x-1/2 flex items-center gap-3">
-        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-cyan)] animate-pulse" />
-        <span className="font-mono text-[10px] tracking-[4px] text-[var(--color-cyan-dim)] uppercase">Gaming Platform</span>
-        <div className="w-1.5 h-1.5 rounded-full bg-[var(--color-cyan)] animate-pulse" />
+        <div className="w-1.5 h-1.5 rounded-full bg-(--color-cyan) animate-pulse" />
+        <span className="font-mono text-[10px] tracking-[4px] text-(--color-cyan-dim) uppercase">Gaming Platform</span>
+        <div className="w-1.5 h-1.5 rounded-full bg-(--color-cyan) animate-pulse" />
       </div>
 
       {/* Card wrapper */}
@@ -69,20 +69,20 @@ export default function Login() {
         </div>
 
         {/* Card glow border */}
-        <div className="absolute -inset-px bg-linear-to-b from-[var(--color-cyan-soft)] via-transparent to-[var(--color-purple)]/10 rounded-lg pointer-events-none" />
+        <div className="absolute -inset-px bg-linear-to-b from-(--color-cyan-soft) via-transparent to-(--color-purple)/10 rounded-lg pointer-events-none" />
 
-        <div className="relative bg-[var(--color-surface)]/95 backdrop-blur border border-[var(--color-border)] rounded-lg p-8 pt-20">
+        <div className="relative bg-(--color-surface)/95 backdrop-blur border border-(--color-border) rounded-lg p-8 pt-20">
 
           {/* Mode toggle */}
-          <div className="flex mb-4 bg-[var(--color-surface-2)] rounded border border-[var(--color-border)] p-0.5">
+          <div className="flex mb-4 bg-(--color-surface-2) rounded border border-(--color-border) p-0.5">
             {(["login", "register"] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => handleModeChange(m)}
                 className={`flex-1 py-2 text-xs tracking-[2px] uppercase font-mono transition-all duration-200 rounded ${
                   mode === m
-                    ? "bg-[var(--color-cyan-soft)] text-[var(--color-cyan)] border border-[var(--color-border)]"
-                    : "text-[var(--color-text-muted)] hover:text-white"
+                    ? "bg-(--color-cyan-soft) text-(--color-cyan) border border-(--color-border)"
+                    : "text-(--color-text-muted) hover:text-white"
                 }`}
               >
                 {m === "login" ? "Sign In" : "Register"}
@@ -132,32 +132,28 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="text-[var(--color-text-muted)] hover:text-[var(--color-cyan)] transition-colors font-mono text-[10px] tracking-wider"
+                  className="text-(--color-text-muted) hover:text-(--color-cyan) transition-colors font-mono text-[10px] tracking-wider"
                 >
                   {showPassword ? "HIDE" : "SHOW"}
                 </button>
               }
             />
 
-            <div className="min-h-[32px]">
+            <div className="messagge-container">
               {error && (
-                <div className="bg-[var(--color-cyan-soft)] border border-[var(--color-border)] rounded px-4 py-2.5">
-                  <p className="text-[var(--color-cyan)] text-xs font-mono">{error}</p>
-                </div>
+                  <p className="text-(--color-cyan) text-xs font-mono">{error}</p>
               )}
               {success && (
-                <div className="bg-[var(--color-cyan-soft)] border border-[var(--color-border)] rounded px-4 py-2.5">
-                  <p className="text-[var(--color-cyan)] text-xs font-mono">
-                    ✓ Account created — you can now sign in
+                  <p className="text-(--color-cyan) text-xs font-mono py-1">
+                    Account created — you can now sign in
                   </p>
-                </div>
               )}
             </div>
 
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="w-3 h-3 border border-[var(--color-cyan-dim)] border-t-[var(--color-cyan)] rounded-full animate-spin" />
+                  <span className="w-3 h-3 border border-(--color-cyan-dim) border-t-(--color-cyan) rounded-full animate-spin" />
                   Processing...
                 </span>
               ) : (
@@ -167,8 +163,8 @@ export default function Login() {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 pt-4 border-t border-[var(--color-border)] text-center">
-            <p className="text-[10px] font-mono text-[var(--color-text-dark)] tracking-[1px]">
+          <div className="mt-6 pt-4 border-t border-(--color-border) text-center">
+            <p className="text-[10px] font-mono text-(--color-text-dark) tracking-[1px]">
               Enter. Compete. Transcend.
             </p>
           </div>
@@ -177,7 +173,7 @@ export default function Login() {
 
       {/* Bottom bar */}
       <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-        <p className="font-mono text-[9px] tracking-[3px] text-[var(--color-text-dark)] uppercase">
+        <p className="font-mono text-[9px] tracking-[3px] text-(--color-text-dark) uppercase">
           Event Horizon © 2026 — All rights reserved
         </p>
       </div>

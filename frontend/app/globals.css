@@ -57,6 +57,11 @@
     margin-bottom: 0.375rem;
   }
 
+  .message-container {
+  height: 32px;
+  overflow: hidden;
+  }
+
   .error-text {
     margin-top: 0.25rem;
     font-size: 10px;
