@@ -32,17 +32,26 @@
 
 ## Seguridad
 
-### La aplicación implementa:
+El sistema de autenticación fue auditado contra el OWASP API Security Top 10:
 
-- Contraseñas hasheadas con bcrypt
-- Access Tokens JWT
-- Refresh Tokens almacenados en cookies HttpOnly
-- Rotación de Refresh Tokens
-- Validaciones server-side
-- Protección básica contra XSS
-- Preparación para Rate Limiting con Redis
-- Registro de IP de login y registro
-
+- **Autenticación en dos pasos (2FA)** con TOTP, mediante código QR compatible 
+  con apps como Google Authenticator.
+- **JWT con rotación de refresh tokens**: cada renovación invalida el token 
+  anterior, y el refresh token se almacena hasheado en base de datos (nunca 
+  en texto plano).
+- **Refresh token en cookie HttpOnly**, en vez de exponerlo en el cuerpo de 
+  la respuesta, reduciendo el riesgo de robo vía XSS.
+- **Access tokens de vida corta** (15 min) para minimizar la ventana de 
+  riesgo ante un token comprometido.
+- **Rate limiting** en los endpoints más sensibles (login, registro, 
+  verificación de OTP y confirmación de 2FA), usando Redis con estrategia 
+  de ventana deslizante para evitar ataques de fuerza bruta.
+- **Mensajes de error sin filtrado de información sensible**: las validaciones 
+  de credenciales no revelan si el fallo fue por email o contraseña incorrectos.
+- **Validación de contraseñas** con reglas de longitud, mayúsculas y números.
+- **Distinción de tipos de token** (access, refresh, otp_pending) para evitar 
+  que un token se use fuera del contexto para el que fue emitido.
+  
 ### Gestión de autenticación
 - Access Token gestionado desde React mediante contexto de autenticación
 - Refresh Token almacenado de forma segura en HttpOnly Cookies
