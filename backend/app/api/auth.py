@@ -14,6 +14,7 @@ from app.services.token_service import TokenService
 from app.core.dependencies import get_current_user
 from app.core.exceptions import InvalidTokenError
 from app.models.user import User
+from app.core.limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -36,6 +37,7 @@ def _clear_refresh_cookie(response: Response) -> None:
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("3/minute")
 async def register(
     data: RegisterRequest,
     request: Request,
@@ -47,6 +49,7 @@ async def register(
 
 
 @router.post("/login", response_model=TokenResponse)
+@limiter.limit("10/minute")
 async def login(
     data: LoginRequest,
     request: Request,
@@ -61,10 +64,11 @@ async def login(
 
     return token_response
 
-
 @router.post("/otp/verify", response_model=TokenResponse)
+@limiter.limit("5/minute")
 async def verify_otp(
     data: OTPVerifyRequest,
+    request: Request,
     response: Response,
     db: AsyncSession = Depends(get_db),
 ) -> TokenResponse:
@@ -75,7 +79,6 @@ async def verify_otp(
     )
     _set_refresh_cookie(response, refresh_token)
     return token_response
-
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(
@@ -119,8 +122,10 @@ async def enable_2fa(
 
 
 @router.post("/2fa/confirm", status_code=status.HTTP_200_OK)
+@limiter.limit("5/minute")
 async def confirm_2fa(
     data: Enable2FAConfirmRequest,
+    request: Request,
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> dict:
